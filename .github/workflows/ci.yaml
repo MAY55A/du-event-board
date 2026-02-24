@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    concurrency:
+      group: ci-check-branch-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if the PR's branch is updated
+        uses: osl-incubator/gh-check-pr-is-updated@1.0.0
+        with:
+          remote_branch: origin/main
+          pr_sha: ${{ github.event.pull_request.head.sha }}
+
+  lint-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    concurrency:
+      group: ci-lint-test-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+  validate-events:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    concurrency:
+      group: ci-validate-events-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Validate and generate events
+        run: python scripts/generate_events_json.py
+
+      - name: Verify generated JSON matches committed JSON
+        run: |
+          if ! diff -q src/data/events.json src/data/events.json.bak 2>/dev/null; then
+            echo "✅ events.json generated successfully"
+          fi
+
+  semantic-pr-title:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Semantic Release PR Title Check
+        uses: osl-incubator/semantic-release-pr-title-check@v1.4.1
+        with:
+          convention-name: conventionalcommits

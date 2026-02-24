@@ -1,0 +1,11 @@
+name: du-event-board
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python>=3.10
+  - nodejs>=20
+  - pyyaml
+  - pip
+  - pip:
+      - pre-commit
