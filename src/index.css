@@ -900,6 +900,7 @@ span.event-list-row__title {
   margin-left: auto;
 }
 
+/* Participation action styles for join/cancel flow. */
 .event-card__join-button {
   font-size: 0.85rem;
   font-weight: 600;
@@ -920,7 +921,7 @@ span.event-list-row__title {
 
 .event-card__join-button.joined {
   background-color: var(--accent-glow);
-  color: var(--accent-primary)
+  color: var(--accent-primary);
 }
 
 .event-card__join-button.joined:hover {
