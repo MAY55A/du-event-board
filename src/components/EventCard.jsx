@@ -1,6 +1,12 @@
 import { getEventStatus } from "../utils/eventHelpers";
 
-export default function EventCard({ event, viewMode = "grid" }) {
+export default function EventCard({
+  event,
+  viewMode = "grid",
+  joinEvent,
+  cancelEvent,
+  isJoined,
+}) {
   const status = getEventStatus(event.date);
   const formattedDate = new Date(event.date + "T00:00:00").toLocaleDateString(
     "en-US",
@@ -97,18 +103,42 @@ export default function EventCard({ event, viewMode = "grid" }) {
           ))}
         </div>
       )}
+      <div className={"event-card__footer"}>
+        {event.url && (
+          <a
+            href={event.url}
+            className="event-card__link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn more
+            <span className="event-card__link-arrow">→</span>
+          </a>
+        )}
 
-      {event.url && (
-        <a
-          href={event.url}
-          className="event-card__link"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn more
-          <span className="event-card__link-arrow">→</span>
-        </a>
-      )}
+        {status !== "ended" && (
+          <div className="event-card__join">
+            {isJoined(event.id) && (
+              <span className="event-card__joined-marker"> ✓ joined</span>
+            )}
+            <button
+              type="button"
+              className={`event-card__join-button ${isJoined(event.id) ? "joined" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+
+                if (isJoined(event.id)) {
+                  cancelEvent(event.id);
+                } else {
+                  joinEvent(event.id);
+                }
+              }}
+            >
+              {isJoined(event.id) ? "Cancel" : "Join event"}
+            </button>
+          </div>
+        )}
+      </div>
     </article>
   );
 }
