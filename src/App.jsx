@@ -39,7 +39,8 @@ export default function App() {
 
   // This state is used to toggle the display of only joined events.
   const [showJoined, setShowJoined] = useState(false);
-  const { joinedEvents, joinEvent, cancelEvent, isJoined } = useParticipation();
+  const { joinedEvents, joinEvent, cancelEvent, isJoined } =
+    useParticipation();
 
   const [theme, setTheme] = useState(() => {
     // Check if we are in a browser and if localStorage.getItem actually exists
@@ -112,6 +113,7 @@ export default function App() {
     const selectedRangeStart = parseISODate(rangeStart);
     const selectedRangeEnd = parseISODate(rangeEnd);
 
+    // Switch the base dataset between all events and the joined subset.
     const sourceEvents = showJoined ? joinedEvents : events;
 
     return sourceEvents.filter((event) => {
@@ -394,6 +396,7 @@ export default function App() {
               <div className="empty-state" id="empty-state">
                 <div className="empty-state__icon">🔎</div>
                 <h2 className="empty-state__title">
+                  {/* In Joined view, differentiate between "none joined" and "filtered out" states. */}
                   {showJoined
                     ? joinedEvents.length === 0
                       ? "No joined events yet"

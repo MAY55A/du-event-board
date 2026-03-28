@@ -25,7 +25,9 @@ describe("App", () => {
 
   const clickJoinEventForTitle = (title) => {
     const card = getEventCardByTitle(title);
-    const joinButton = within(card).getByRole("button", { name: "Join event" });
+    const joinButton = within(card).getByRole("button", {
+      name: "Join event",
+    });
     fireEvent.click(joinButton);
   };
 
@@ -277,7 +279,9 @@ describe("App", () => {
     clickJoinEventForTitle("Rust Programming Intro - São Paulo");
     fireEvent.click(screen.getByRole("button", { name: /^Joined$/ }));
 
-    const joinedCard = getEventCardByTitle("Rust Programming Intro - São Paulo");
+    const joinedCard = getEventCardByTitle(
+      "Rust Programming Intro - São Paulo",
+    );
     const cancelButton = within(joinedCard).getByRole("button", {
       name: "Cancel",
     });

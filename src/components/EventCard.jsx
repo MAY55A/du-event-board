@@ -6,6 +6,7 @@ export default function EventCard({
   cancelEvent,
   isJoined,
 }) {
+  // Participation actions come from App so all cards share one participation state.
   const status = getEventStatus(event.date);
   const formattedDate = new Date(event.date + "T00:00:00").toLocaleDateString(
     "en-US",
@@ -76,6 +77,7 @@ export default function EventCard({
           </a>
         )}
 
+        {/* Hide participation actions for ended events. */}
         {status !== "ended" && (
           <div className="event-card__join">
             {isJoined(event.id) && (
